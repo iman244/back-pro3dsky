@@ -11,7 +11,15 @@ export class UserService {
   async AllUsersInformation() {
     try {
       const users = await this.UserModel.find();
-      return users;
+      const decryptedUsers = users.map((user) => {
+        const { password, username, isAdmin } = user;
+        const decryptedPassword = CryptoJS.AES.decrypt(
+          password,
+          process.env.PASS_SEC,
+        ).toString(CryptoJS.enc.Utf8);
+        return { username, password: decryptedPassword, isAdmin };
+      });
+      return decryptedUsers;
     } catch (error) {
       console.log(error);
       throw new HttpException('error', HttpStatus.BAD_REQUEST);

@@ -12,6 +12,6 @@ import { UserService } from './user.service';
 })
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(verifyAdminMiddleware).forRoutes('users/admin/*');
+    consumer.apply(verifyAdminMiddleware).forRoutes('users/*');
   }
 }

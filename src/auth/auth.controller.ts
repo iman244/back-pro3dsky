@@ -15,7 +15,7 @@ export class AuthController {
     const data = await this.AuthService.login(body);
     response.cookie('access_token', data.token, {
       maxAge: 900000,
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'none',
       secure: true,
     });

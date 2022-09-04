@@ -13,7 +13,7 @@ import { credentials } from './users.type';
 @Controller('users')
 export class UserController {
   constructor(private readonly UserService: UserService) {}
-  @Get('admin/all')
+  @Get()
   AllUsersInformation() {
     return this.UserService.AllUsersInformation();
   }
