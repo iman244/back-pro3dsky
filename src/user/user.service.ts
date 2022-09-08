@@ -8,21 +8,41 @@ const CryptoJS = require('crypto-js');
 export class UserService {
   constructor(@InjectModel('User') private readonly UserModel: Model<User>) {}
 
-  async AllUsersInformation() {
+  async AllUsersInformation(page: number, limit: number) {
     try {
-      const users = await this.UserModel.find();
+      const users = await this.UserModel.find()
+        .limit(limit)
+        .skip((page - 1) * limit);
       const decryptedUsers = users.map((user) => {
-        const { password, username, isAdmin } = user;
+        const { _id, username, password, isAdmin } = user;
         const decryptedPassword = CryptoJS.AES.decrypt(
           password,
           process.env.PASS_SEC,
         ).toString(CryptoJS.enc.Utf8);
-        return { username, password: decryptedPassword, isAdmin };
+
+        return {
+          _id,
+          username,
+          password: decryptedPassword,
+          isAdmin,
+        };
       });
-      return decryptedUsers;
+      const totalUsers = await this.usersCount();
+
+      return { users: decryptedUsers, totalUsers };
     } catch (error) {
       console.log(error);
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async usersCount() {
+    try {
+      const usersCount = await this.UserModel.countDocuments();
+      return usersCount;
+    } catch (error) {
+      console.log(error);
+      return new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -31,7 +51,10 @@ export class UserService {
       const { password, ...otherCredentials } = body;
       const user = await this.UserModel.create({
         ...otherCredentials,
-        password: CryptoJS.AES.encrypt(password, process.env.PASS_SEC),
+        password: CryptoJS.AES.encrypt(
+          password,
+          process.env.PASS_SEC,
+        ).toString(),
       });
       return user;
     } catch (error) {
@@ -40,9 +63,22 @@ export class UserService {
     }
   }
 
-  async updateUser(id: string) {
+  async updateUser(id: string, data: credentials) {
     try {
-      const user = await this.UserModel.findByIdAndUpdate(id);
+      const { username, password, isAdmin } = data;
+
+      const user = await this.UserModel.findByIdAndUpdate(
+        id,
+        {
+          username,
+          password: CryptoJS.AES.encrypt(
+            password,
+            process.env.PASS_SEC,
+          ).toString(),
+          isAdmin,
+        },
+        { new: true },
+      );
       return user;
     } catch (error) {
       console.log(error);

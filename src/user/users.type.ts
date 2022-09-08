@@ -11,6 +11,7 @@ export interface hasToken extends Object {
 export interface credentials {
   username: string;
   password: string;
+  isAdmin: boolean;
 }
 
 export interface User extends DocumentResult<Object> {

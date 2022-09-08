@@ -16,8 +16,8 @@ export class AuthController {
     response.cookie('access_token', data.token, {
       maxAge: 900000,
       httpOnly: false,
-      sameSite: 'none',
-      secure: true,
+      sameSite: 'strict',
+      secure: false,
     });
     return data.user;
   }
