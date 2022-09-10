@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import e from 'express';
 import { Model } from 'mongoose';
 import { credentials, User } from './users.type';
 const CryptoJS = require('crypto-js');
@@ -104,5 +105,36 @@ export class UserService {
       console.log(error);
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async searchUsers(keyword: string, page:number, limit: number){
+    try {
+      const users = await this.UserModel.find({username: {$regex: keyword, $options: 'i'}})
+        .limit(limit)
+        .skip((page - 1) * limit);
+        console.log("users\n",users)
+      const decryptedUsers = users.map((user) => {
+        const { _id, username, password, isAdmin } = user;
+        const decryptedPassword = CryptoJS.AES.decrypt(
+          password,
+          process.env.PASS_SEC,
+        ).toString(CryptoJS.enc.Utf8);
+
+        return {
+          _id,
+          username,
+          password: decryptedPassword,
+          isAdmin,
+        };
+      });
+      const totalUsers = await this.UserModel.countDocuments({username: {$regex: keyword, $options: 'i'}});
+
+      return { users: decryptedUsers, totalUsers };
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+
   }
 }

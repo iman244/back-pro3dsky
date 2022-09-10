@@ -27,6 +27,22 @@ export class UserController {
     return user;
   }
 
+  @Get('search')
+  async searchInUsers(
+    @Body('searchKeyWord') keyword: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    console.log('keyword', keyword);
+    console.log('page', page);
+    if (keyword === '') {
+      return this.UserService.AllUsersInformation(page, limit);
+    } else {
+      console.log("its not ''");
+    }
+    return 'search';
+  }
+
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() data: credentials) {
     return this.UserService.updateUser(id, data);
@@ -38,10 +54,17 @@ export class UserController {
   }
 
   @Get()
-  AllUsersInformation(
+  async AllUsersInformation(
+    @Query('keyword') keyword: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    return this.UserService.AllUsersInformation(page, limit);
+    if (!keyword) {
+    console.log('we are in if', keyword);
+      return this.UserService.AllUsersInformation(page, limit);
+    } else {
+      console.log(keyword)
+      return this.UserService.searchUsers(keyword, page, limit)
+    }
   }
 }
