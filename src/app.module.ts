@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserService } from './user/user.service';
+import { UserSchema } from './user/user.model';
 
 @Module({
   imports: [
@@ -12,6 +14,7 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot(
       'mongodb+srv://pro3dsky:0afIIpgKy7YM25Jp@cluster0.xgb4ow9.mongodb.net/pro3dsky',
     ),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     UserModule,
     AuthModule,
   ],
