@@ -1,5 +1,3 @@
-import { Exclude } from 'class-transformer';
-
 interface DocumentResult<T> extends Document {
   _doc: T;
 }
