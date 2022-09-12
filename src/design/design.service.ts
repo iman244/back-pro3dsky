@@ -11,6 +11,41 @@ export class DesignService {
     @InjectModel('Design') private readonly DesignModel: Model<Design>,
   ) {}
 
+  async getDesigns(page = 1, limit = 1) {
+    try {
+      const designs = await this.DesignModel.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip((page - 1) * limit);
+
+      const totalDesigns = await this.DesignModel.countDocuments();
+
+      return { designs, totalDesigns };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async searchDesigns(keyword: string, page = 1, limit = 1) {
+    try {
+      let designs = await this.DesignModel.find({
+        username: { $regex: keyword, $options: 'i' },
+      })
+        .limit(limit)
+        .skip((page - 1) * limit);
+
+      const totalDesigns = await this.DesignModel.countDocuments({
+        username: { $regex: keyword, $options: 'i' },
+      });
+
+      return { designs, totalDesigns };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async saveMongoDBDocument(
     design: DesignBody,
     files: Array<Express.Multer.File>,
@@ -61,6 +96,7 @@ export class DesignService {
       return resultList;
     } catch (error) {
       console.log(error);
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -77,6 +113,7 @@ export class DesignService {
       return data;
     } catch (error) {
       console.log('Error', error);
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }
 

@@ -15,12 +15,6 @@ import { credentials } from './users.type';
 export class UserController {
   constructor(private readonly UserService: UserService) {}
 
-  @Get('count')
-  async UsersCount() {
-    console.log('get request for usersCount');
-    return this.UserService.usersCount();
-  }
-
   @Post('register')
   async register(@Body() body: credentials) {
     const user = await this.UserService.register(body);
@@ -60,11 +54,9 @@ export class UserController {
     @Query('limit') limit: number,
   ) {
     if (!keyword) {
-    console.log('we are in if', keyword);
       return this.UserService.AllUsersInformation(page, limit);
     } else {
-      console.log(keyword)
-      return this.UserService.searchUsers(keyword, page, limit)
+      return this.UserService.searchUsers(keyword, page, limit);
     }
   }
 }

@@ -11,6 +11,7 @@ export class UserService {
   async AllUsersInformation(page: number, limit: number) {
     try {
       const users = await this.UserModel.find()
+        .sort({ createdAt: -1 })
         .limit(limit)
         .skip((page - 1) * limit);
       const decryptedUsers = users.map((user) => {
@@ -27,22 +28,12 @@ export class UserService {
           isAdmin,
         };
       });
-      const totalUsers = await this.usersCount();
+      const totalUsers = await this.UserModel.countDocuments();
 
       return { users: decryptedUsers, totalUsers };
     } catch (error) {
       console.log(error);
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async usersCount() {
-    try {
-      const usersCount = await this.UserModel.countDocuments();
-      return usersCount;
-    } catch (error) {
-      console.log(error);
-      return new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }
 

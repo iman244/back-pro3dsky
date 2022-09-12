@@ -1,7 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
+  HttpException,
+  HttpStatus,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -10,9 +14,22 @@ import { diskStorage } from 'multer';
 import { DesignService } from './design.service';
 import { DesignBody } from './design.type';
 
-@Controller('design')
+@Controller('designs')
 export class DesignController {
   constructor(private readonly DesignService: DesignService) {}
+
+  @Get()
+  async getDesigns(
+    @Query('keyword') keyword: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    if (!keyword) {
+      return await this.DesignService.getDesigns(page, limit);
+    } else {
+      return this.DesignService.searchDesigns(keyword, page, limit);
+    }
+  }
 
   @Post('upload')
   @UseInterceptors(
@@ -39,7 +56,7 @@ export class DesignController {
     const { name, keyList } = mongoDBDocument;
 
     let a = await this.DesignService.upload(name, keyList, files);
-    console.log(a);
-    return 'we are in test';
+
+    return 'uploaded successfully';
   }
 }
