@@ -27,21 +27,52 @@ export class DesignService {
     }
   }
 
-  async searchDesigns(keyword: string, page = 1, limit = 1) {
+  async searchDesigns(
+    name: string,
+    isPremium: boolean,
+    category: string,
+    page = 1,
+    limit = 1,
+  ) {
     try {
       let designs = await this.DesignModel.find({
-        username: { $regex: keyword, $options: 'i' },
+        name: { $regex: name, $options: 'i' },
+        isPremium: isPremium ? isPremium : { $in: [true, false] },
+        category: category
+          ? { $regex: category, $options: 'i' }
+          : {
+              $in: [
+                'architecture',
+                'furniture',
+                'decoration',
+                'material',
+                'lighting',
+                'kitchen',
+                'bathroom',
+                'plants',
+                'other',
+              ],
+            },
       })
         .limit(limit)
         .skip((page - 1) * limit);
 
       const totalDesigns = await this.DesignModel.countDocuments({
-        username: { $regex: keyword, $options: 'i' },
+        name: { $regex: name, $options: 'i' },
       });
 
       return { designs, totalDesigns };
     } catch (error) {
       console.log(error);
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findDesign(id: string) {
+    try {
+      const design = await this.DesignModel.findById(id);
+      return design;
+    } catch (error) {
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }

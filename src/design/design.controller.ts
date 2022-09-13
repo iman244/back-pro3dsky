@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Query,
   UploadedFiles,
@@ -20,15 +21,28 @@ export class DesignController {
 
   @Get()
   async getDesigns(
-    @Query('keyword') keyword: string,
+    @Query('name') name: string,
+    @Query('isPremium') isPremium: boolean,
+    @Query('category') category: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    if (!keyword) {
+    if (!name) {
       return await this.DesignService.getDesigns(page, limit);
     } else {
-      return this.DesignService.searchDesigns(keyword, page, limit);
+      return this.DesignService.searchDesigns(
+        name,
+        isPremium,
+        category,
+        page,
+        limit,
+      );
     }
+  }
+
+  @Get(':id')
+  async findDesign(@Param('id') id: string) {
+    return await this.DesignService.findDesign(id);
   }
 
   @Post('upload')
