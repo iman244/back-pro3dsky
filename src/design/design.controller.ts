@@ -110,6 +110,8 @@ export class DesignController {
     return 'updated successfully';
   }
 
-  @Delete(':id')
-  async deleteDesign() {}
+  @Delete('delete/:id')
+  async deleteDesign(@Param('id') id: string) {
+    return this.DesignService.deleteDesign(id);
+  }
 }

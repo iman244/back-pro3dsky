@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -89,8 +93,20 @@ export class DesignService {
   async findDesign(id: string) {
     try {
       const design = await this.DesignModel.findById(id);
+      if (!design) {
+        throw new HttpException(
+          'no user with this id found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
       return design;
     } catch (error) {
+      if (error.status === 404) {
+        throw new HttpException(
+          'no user with this id found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
     }
   }
@@ -211,5 +227,43 @@ export class DesignService {
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     });
+  }
+
+  async deleteObjectInS3(bucket, name) {
+    try {
+      const s3 = this.getS3();
+      const params = {
+        Bucket: bucket,
+        Key: String(name),
+        // VersionId: 'version2.2',
+      };
+      const data = await s3.send(new DeleteObjectCommand(params));
+      console.log('Success', data);
+    } catch (error) {
+      throw new HttpException(
+        'error in deleteObjectInS3',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async deleteDesign(id: string) {
+    try {
+      let mongoDBDocument = await this.DesignModel.findById(id);
+      const { keyList } = mongoDBDocument;
+      let resultList = [];
+      for (let i = 0; i < keyList.length; i++) {
+        const bucketS3 = process.env.BUCKETS3_NAME;
+
+        let result = await this.deleteObjectInS3(bucketS3, keyList[i]);
+        resultList.push(result);
+      }
+
+      await this.DesignModel.findByIdAndRemove(id);
+
+      return 'design delete successfully';
+    } catch (error) {
+      throw new HttpException('error in delete design', HttpStatus.BAD_REQUEST);
+    }
   }
 }
