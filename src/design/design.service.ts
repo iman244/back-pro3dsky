@@ -57,8 +57,26 @@ export class DesignService {
         .limit(limit)
         .skip((page - 1) * limit);
 
+      console.log(designs);
+
       const totalDesigns = await this.DesignModel.countDocuments({
         name: { $regex: name, $options: 'i' },
+        isPremium: isPremium ? isPremium : { $in: [true, false] },
+        category: category
+          ? { $regex: category, $options: 'i' }
+          : {
+              $in: [
+                'architecture',
+                'furniture',
+                'decoration',
+                'material',
+                'lighting',
+                'kitchen',
+                'bathroom',
+                'plants',
+                'other',
+              ],
+            },
       });
 
       return { designs, totalDesigns };
@@ -107,6 +125,42 @@ export class DesignService {
     }
   }
 
+  async updateMongoDBDocument(
+    id: string,
+    design: DesignBody,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const { name, category, isPremium } = design;
+      const fileCount = files.length;
+      let keyList: string[] = [];
+      for (let i = 0; i < fileCount; i++) {
+        keyList.push(
+          `${name}_${i}.${files[i].mimetype.match(/(?<=\/)[\S\s]*/g)[0]}`,
+        );
+      }
+
+      let query: {
+        name: string;
+        category: string;
+        isPremium: boolean;
+        keyList?: string[];
+      } = { name, category, isPremium };
+      if (keyList.length) {
+        query.keyList = keyList;
+      }
+
+      return await this.DesignModel.findByIdAndUpdate(id, query, { new: true });
+    } catch (error) {
+      console.log(error);
+      if (error.code === 11000) {
+        throw new HttpException('duplicate name', HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException('error', HttpStatus.BAD_REQUEST);
+      }
+    }
+  }
+
   async upload(
     name: string,
     keyList: string[],
@@ -127,7 +181,7 @@ export class DesignService {
       return resultList;
     } catch (error) {
       console.log(error);
-      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('no file to upload', HttpStatus.LENGTH_REQUIRED);
     }
   }
 
