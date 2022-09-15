@@ -10,8 +10,8 @@ import { UserService } from './user.service';
   controllers: [UserController],
   providers: [UserService],
 })
-export class UserModule {
+export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(verifyAdminMiddleware).forRoutes('users/*');
+    consumer.apply(verifyAdminMiddleware).forRoutes('users');
   }
 }

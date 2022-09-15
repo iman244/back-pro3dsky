@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { UserSchema } from './user/user.model';
 import { DesignModule } from './design/design.module';
+import { verifyAdminMiddleware } from './middlewares/verifyAdmin.middleware';
 
 @Module({
   imports: [
@@ -23,4 +29,10 @@ import { DesignModule } from './design/design.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(verifyAdminMiddleware)
+  //     .forRoutes({ path: ':id', method: RequestMethod.DELETE });
+  // }
+}
