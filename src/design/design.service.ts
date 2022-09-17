@@ -181,6 +181,7 @@ export class DesignService {
     name: string,
     keyList: string[],
     files: Array<Express.Multer.File>,
+    ACL: string,
   ) {
     try {
       let resultList = [];
@@ -191,6 +192,7 @@ export class DesignService {
           fs.createReadStream(files[i].path),
           bucketS3,
           `${keyList[i]}`,
+          ACL,
         );
         resultList.push(result);
       }
@@ -201,12 +203,12 @@ export class DesignService {
     }
   }
 
-  async uploadS3(file, bucket, name) {
+  async uploadS3(file, bucket, name, ACL: string) {
     const s3 = this.getS3();
     const params = {
       Bucket: bucket,
       Key: String(name),
-      ACL: 'public-read',
+      ACL,
       Body: file,
     };
     try {

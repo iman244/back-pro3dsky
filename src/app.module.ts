@@ -14,6 +14,7 @@ import { UserService } from './user/user.service';
 import { UserSchema } from './user/user.model';
 import { DesignModule } from './design/design.module';
 import { verifyAdminMiddleware } from './middlewares/verifyAdmin.middleware';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { verifyAdminMiddleware } from './middlewares/verifyAdmin.middleware';
     UserModule,
     AuthModule,
     DesignModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
