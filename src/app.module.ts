@@ -31,10 +31,4 @@ import { FileModule } from './file/file.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //     .apply(verifyAdminMiddleware)
-  //     .forRoutes({ path: ':id', method: RequestMethod.DELETE });
-  // }
-}
+export class AppModule {}

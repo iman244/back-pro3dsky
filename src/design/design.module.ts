@@ -5,6 +5,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AppService } from 'src/app.service';
 import { verifyAdminMiddleware } from 'src/middlewares/verifyAdmin.middleware';
 import { verifyUserMiddleware } from 'src/middlewares/verifyUser.middleware';
 import { DesignController } from './design.controller';

@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -12,10 +10,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { DesignService } from './design.service';
 import { DesignBody } from './design.type';

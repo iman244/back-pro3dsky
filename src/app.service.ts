@@ -1,3 +1,4 @@
+import { S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request, Response } from 'express';
@@ -29,13 +30,15 @@ export class AppService {
     );
     return isAdmin;
   }
-  async deleteUser(id: string) {
-    try {
-      const user = await this.UserModel.findByIdAndDelete(id);
-      return `delete user ${id}`;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException('error', HttpStatus.BAD_REQUEST);
-    }
+
+  getS3() {
+    return new S3Client({
+      region: 'default',
+      endpoint: process.env.ENDPOINT_URL,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
   }
 }
