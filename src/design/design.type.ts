@@ -18,7 +18,7 @@ export interface DesignInformation {
 }
 
 export interface DesignBody {
-  name: string;
+  name?: string;
   category: string;
   isPremium: boolean;
 }

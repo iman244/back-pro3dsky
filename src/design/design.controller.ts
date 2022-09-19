@@ -69,8 +69,6 @@ export class DesignController {
     @UploadedFiles()
     files: { images: Express.Multer.File[]; rarFile: Express.Multer.File[] },
   ) {
-    console.log(files);
-
     const mongoDBDocument = await this.DesignService.saveMongoDBDocument(
       DesignBody,
       files.images,
@@ -122,18 +120,21 @@ export class DesignController {
   async updateDesign(
     @Param('id') id: string,
     @Body() DesignBody: DesignBody,
+    @UploadedFiles()
     files: { images: Express.Multer.File[]; rarFile: Express.Multer.File[] },
   ) {
+    const prevDocument = await this.DesignService.findDesign(id);
+    const designUpdateKeyValue = { name: prevDocument.name, ...DesignBody };
     const mongoDBDocument = await this.DesignService.updateMongoDBDocument(
       id,
-      DesignBody,
-      files.images,
+      designUpdateKeyValue,
+      files && files.images,
     );
 
     const { name, keyList } = mongoDBDocument;
 
-    if (files.images.length) {
-      console.log('we are in files', files.images.length);
+    if (files.images && files.images.length) {
+      // console.log('we are in images', files.images, files.images.length);
       let a = await this.DesignService.upload(
         name,
         keyList,
@@ -142,7 +143,9 @@ export class DesignController {
       );
     }
 
-    if (files.rarFile.length) {
+    if (files.rarFile && files.rarFile.length) {
+      // console.log('we are in rarFiles', files.rarFile, files.rarFile.length);
+
       let RARkeyList = [];
       for (let i = 0; i < files.rarFile.length; i++) {
         RARkeyList.push(`${name}_${i}.rar`);

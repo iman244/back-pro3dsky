@@ -6,6 +6,9 @@ import { Model } from 'mongoose';
 import { join } from 'path';
 import { Design } from 'src/design/design.type';
 import { Readable } from 'stream';
+const { S3RequestPresigner } = require('@aws-sdk/s3-request-presigner');
+const { createRequest } = require('@aws-sdk/util-create-request');
+const { formatUrl } = require('@aws-sdk/util-format-url');
 
 @Injectable()
 export class FileService {
@@ -52,6 +55,36 @@ export class FileService {
       console.log('Success');
     } catch (err) {
       console.log('Error', err);
+    }
+  }
+
+  async getPreSignedURL(name: string) {
+    const s3 = this.getS3();
+
+    const clientParams = {
+      Bucket: process.env.BUCKETS3_NAME,
+      Key: name,
+    };
+    const signedRequest = new S3RequestPresigner(s3.config);
+
+    try {
+      // Create request
+      const request = await createRequest(
+        s3,
+        // new GetObjectCommand(clientParams)
+        new GetObjectCommand(clientParams),
+      );
+      // Create and format presigned URL
+      const signedUrl = formatUrl(
+        await signedRequest.presign(request, {
+          // Supply expiration in second
+          expiresIn: 60 * 15,
+        }),
+      );
+
+      return signedUrl;
+    } catch (err) {
+      console.log('Error creating presigned URL', err);
     }
   }
 

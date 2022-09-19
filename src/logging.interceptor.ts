@@ -4,6 +4,8 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
+import { readdir, unlink } from 'fs';
+const path = require('path');
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -20,17 +22,38 @@ function logKeyValues(object: object) {
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    console.log('Before...');
     const [request, response, nextf] = context.getArgs();
-    console.log(typeof request);
 
-    // logKeyValues(request);
-    console.log('request.url:', request.url);
-    console.log('request.method:', request.method);
+    // console.log('request.url:', request.url);
+    // console.log('request.method:', request.method);
 
     const now = Date.now();
-    return next
-      .handle()
-      .pipe(tap(() => console.log(`After... ${Date.now() - now}ms\n`)));
+    return next.handle().pipe(
+      tap(() => {
+        const uploadsDirectory = './uploads';
+        const downloadDirectory = './downloads';
+
+        readdir(uploadsDirectory, (err, files) => {
+          if (err) throw err;
+
+          for (const file of files) {
+            unlink(path.join(uploadsDirectory, file), (err) => {
+              if (err) throw err;
+            });
+          }
+        });
+
+        // readdir(downloadDirectory, (err, files) => {
+        //   if (err) throw err;
+
+        //   for (const file of files) {
+        //     unlink(path.join(downloadDirectory, file), (err) => {
+        //       if (err) throw err;
+        //     });
+        //   }
+        // });
+        // console.log(`After... ${Date.now() - now}ms\n`)
+      }),
+    );
   }
 }

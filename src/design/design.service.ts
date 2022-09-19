@@ -144,7 +144,7 @@ export class DesignService {
   async updateMongoDBDocument(
     id: string,
     design: DesignBody,
-    files: Array<Express.Multer.File>,
+    files: Array<Express.Multer.File> = [],
   ) {
     try {
       const { name, category, isPremium } = design;
@@ -251,15 +251,19 @@ export class DesignService {
 
   async deleteDesign(id: string) {
     try {
+      const bucketS3 = process.env.BUCKETS3_NAME;
       let mongoDBDocument = await this.DesignModel.findById(id);
-      const { keyList } = mongoDBDocument;
+      const { name, keyList } = mongoDBDocument;
       let resultList = [];
       for (let i = 0; i < keyList.length; i++) {
-        const bucketS3 = process.env.BUCKETS3_NAME;
-
         let result = await this.deleteObjectInS3(bucketS3, keyList[i]);
         resultList.push(result);
       }
+
+      let deleteRARFile = await this.deleteObjectInS3(
+        bucketS3,
+        `${name}_0.rar`,
+      );
 
       await this.DesignModel.findByIdAndRemove(id);
 
