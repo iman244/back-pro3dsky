@@ -33,13 +33,16 @@ export class LoggingInterceptor implements NestInterceptor {
         const uploadsDirectory = './uploads';
         const downloadDirectory = './downloads';
 
-        readdir(uploadsDirectory, (err, files) => {
-          if (err) throw err;
-
-          for (const file of files) {
-            unlink(path.join(uploadsDirectory, file), (err) => {
-              if (err) throw err;
-            });
+        readdir(uploadsDirectory, (error, files) => {
+          if (error) {
+            // console.log(error);
+          }
+          if (files) {
+            for (const file of files) {
+              unlink(path.join(uploadsDirectory, file), (error) => {
+                // if (error) console.log(error);
+              });
+            }
           }
         });
 
