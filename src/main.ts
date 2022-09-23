@@ -7,6 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
+    methods: ['POST', 'PUT', 'GET'],
     origin: true,
     credentials: true,
   });
