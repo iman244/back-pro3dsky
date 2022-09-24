@@ -7,8 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
-    methods: ['POST', 'PUT', 'GET'],
-    origin: true,
+    methods: ['POST', 'GET', 'PUT'],
+    origin: [
+      'http://pro3dsky.com',
+      'http://adminpanel.pro3dsky.com',
+      'http://www.pro3dsky.com',
+    ],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
   app.use(cookieParser());
