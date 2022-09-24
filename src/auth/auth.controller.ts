@@ -18,6 +18,7 @@ export class AuthController {
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
+      domain: 'pro3dsky.com',
     });
     return data.user;
   }
