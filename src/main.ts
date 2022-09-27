@@ -7,7 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
-    methods: ['POST', 'GET', 'PUT'],
+    methods: ['POST', 'GET', 'PUT', 'DELETE'],
+    // origin: true,
     origin: [
       'http://pro3dsky.com',
       'http://adminpanel.pro3dsky.com',

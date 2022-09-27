@@ -7,6 +7,7 @@ import { join } from 'path';
 import { Design } from 'src/design/design.type';
 import { Readable } from 'stream';
 const { S3RequestPresigner } = require('@aws-sdk/s3-request-presigner');
+const { createPresignedPost } = require('@aws-sdk/s3-presigned-post');
 const { createRequest } = require('@aws-sdk/util-create-request');
 const { formatUrl } = require('@aws-sdk/util-format-url');
 

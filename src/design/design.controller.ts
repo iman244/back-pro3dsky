@@ -45,7 +45,7 @@ export class DesignController {
     return await this.DesignService.findDesign(id);
   }
 
-  @Post('upload')
+  @Post('uploadByServer')
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -98,7 +98,88 @@ export class DesignController {
     return 'uploaded successfully';
   }
 
+  @Post('upload')
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'images', maxCount: 10 }], {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, 'uploads');
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    }),
+  )
+  async uploadTest(
+    @Body() DesignBody: DesignBody,
+    @UploadedFiles()
+    files: { images: Express.Multer.File[] },
+  ) {
+    const mongoDBDocument = await this.DesignService.saveMongoDBDocument(
+      DesignBody,
+      files.images,
+    );
+
+    const { name, keyList } = mongoDBDocument;
+
+    let uploadImages = await this.DesignService.upload(
+      name,
+      keyList,
+      files.images,
+      'public-read',
+    );
+
+    const PresignedPost = await this.DesignService.getUploadSignedURL(name);
+
+    return { message: 'uploaded successfully the test one', PresignedPost };
+  }
+
   @Put('update/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'images', maxCount: 10 }], {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, 'uploads');
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    }),
+  )
+  async updateTestDesign(
+    @Param('id') id: string,
+    @Body() DesignBody: DesignBody,
+    @UploadedFiles()
+    files: { images: Express.Multer.File[] },
+  ) {
+    const prevDocument = await this.DesignService.findDesign(id);
+    const designUpdateKeyValue = { name: prevDocument.name, ...DesignBody };
+    const mongoDBDocument = await this.DesignService.updateMongoDBDocument(
+      id,
+      designUpdateKeyValue,
+      files && files.images,
+    );
+
+    const { name, keyList } = mongoDBDocument;
+
+    if (files.images && files.images.length) {
+      // console.log('we are in images', files.images, files.images.length);
+      let a = await this.DesignService.upload(
+        name,
+        keyList,
+        files.images,
+        'public-read',
+      );
+    }
+
+    const PresignedPost = await this.DesignService.getUploadSignedURL(name);
+
+    return { message: 'update successfully the test one', PresignedPost };
+  }
+
+  @Put('updateByServer/:id')
   @UseInterceptors(
     FileFieldsInterceptor(
       [

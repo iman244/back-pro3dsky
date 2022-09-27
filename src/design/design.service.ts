@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Design, DesignBody } from './design.type';
 import * as fs from 'fs';
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 
 @Injectable()
 export class DesignService {
@@ -141,6 +142,30 @@ export class DesignService {
     }
   }
 
+  async mongoDBDocumentwithNumber(design: DesignBody, number: number) {
+    try {
+      const { name, category, isPremium } = design;
+      let keyList = [];
+      for (let i = 0; i < number; i++) {
+        keyList.push(`${name}_${i}`);
+      }
+
+      return await this.DesignModel.create({
+        name,
+        category,
+        isPremium,
+        keyList,
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.code === 11000) {
+        throw new HttpException('duplicate name', HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException('error', HttpStatus.BAD_REQUEST);
+      }
+    }
+  }
+
   async updateMongoDBDocument(
     id: string,
     design: DesignBody,
@@ -217,6 +242,31 @@ export class DesignService {
     } catch (error) {
       console.log('Error', error);
       throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getUploadSignedURL(name: string) {
+    try {
+      const s3 = this.getS3();
+
+      const UploadpreSignedParams = {
+        Bucket: process.env.BUCKETS3_NAME,
+        Key: `${name}_0.rar`,
+        Conditions: [{ acl: 'private' }, { bucket: process.env.BUCKETS3_NAME }],
+        Fields: {
+          acl: 'private',
+        },
+        Expires: 600, //Seconds before the presigned post expires. 3600 by default.
+      };
+
+      const { url, fields } = await createPresignedPost(
+        s3,
+        UploadpreSignedParams,
+      );
+
+      return { url, fields };
+    } catch (err) {
+      console.log('Error creating UPLOAD presigned URL', err);
     }
   }
 

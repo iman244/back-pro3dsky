@@ -14,11 +14,12 @@ export class AuthController {
   ) {
     const data = await this.AuthService.login(body);
     response.cookie('access_token', data.token, {
-      maxAge: 60 * 60 * 24 * 1000 * 1000 * 1000,
+      maxAge: 60 * 60 * 24 * 24,
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
-      domain: 'pro3dsky.com',
+      domain: '127.0.0.1',
+      // domain: 'pro3dsky.com',
     });
     return data.user;
   }
