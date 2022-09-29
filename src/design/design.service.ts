@@ -62,8 +62,6 @@ export class DesignService {
         .limit(limit)
         .skip((page - 1) * limit);
 
-      console.log(designs);
-
       const totalDesigns = await this.DesignModel.countDocuments({
         name: { $regex: name, $options: 'i' },
         isPremium: isPremium ? isPremium : { $in: [true, false] },
@@ -290,7 +288,6 @@ export class DesignService {
         // VersionId: 'version2.2',
       };
       const data = await s3.send(new DeleteObjectCommand(params));
-      console.log('Success', data);
     } catch (error) {
       throw new HttpException(
         'error in deleteObjectInS3',

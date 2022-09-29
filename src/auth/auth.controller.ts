@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { credentials } from 'src/user/users.type';
 import { AuthService } from './auth.service';
@@ -18,9 +18,23 @@ export class AuthController {
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
-      domain: '127.0.0.1',
-      // domain: 'pro3dsky.com',
+      // domain: '127.0.0.1',
+      domain: 'pro3dsky.com',
     });
     return data.user;
+  }
+
+  @Get('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.cookie('access_token', 'expired', {
+      maxAge: 0,
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: false,
+      // domain: '127.0.0.1',
+      domain: 'pro3dsky.com',
+    });
+
+    return { message: 'logoutSuccessfully' };
   }
 }
