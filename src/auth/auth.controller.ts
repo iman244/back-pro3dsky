@@ -13,8 +13,11 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const data = await this.AuthService.login(body);
+
+    var expireDate = new Date();
+    expireDate.setHours(expireDate.getHours() + 4);
     response.cookie('access_token', data.token, {
-      maxAge: 60 * 60 * 24 * 24,
+      expires: expireDate,
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
@@ -26,8 +29,9 @@ export class AuthController {
 
   @Get('logout')
   logout(@Res({ passthrough: true }) response: Response) {
+    const now = new Date();
     response.cookie('access_token', 'expired', {
-      maxAge: 0,
+      expires: now,
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
