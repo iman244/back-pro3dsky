@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './logging.interceptor';
 const cookieParser = require('cookie-parser');
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,8 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
+  app.use(bodyParser.json({ limit: '200mb' }));
+  app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
   await app.listen(3000);
 }
 bootstrap();
