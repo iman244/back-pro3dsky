@@ -64,7 +64,7 @@ export class DesignController {
       },
     ),
   )
-  async upload(
+  async uploadByServer(
     @Body() DesignBody: DesignBody,
     @UploadedFiles()
     files: { images: Express.Multer.File[]; rarFile: Express.Multer.File[] },
@@ -111,7 +111,7 @@ export class DesignController {
       }),
     }),
   )
-  async uploadTest(
+  async upload(
     @Body() DesignBody: DesignBody,
     @UploadedFiles()
     files: { images: Express.Multer.File[] },
@@ -132,7 +132,7 @@ export class DesignController {
 
     const PresignedPost = await this.DesignService.getUploadSignedURL(name);
 
-    return { message: 'uploaded successfully the test one', PresignedPost };
+    return { message: 'uploaded successfully', PresignedPost };
   }
 
   @Put('update/:id')
@@ -148,7 +148,7 @@ export class DesignController {
       }),
     }),
   )
-  async updateTestDesign(
+  async updateDesign(
     @Param('id') id: string,
     @Body() DesignBody: DesignBody,
     @UploadedFiles()
@@ -176,7 +176,7 @@ export class DesignController {
 
     const PresignedPost = await this.DesignService.getUploadSignedURL(name);
 
-    return { message: 'update successfully the test one', PresignedPost };
+    return { message: 'update successfully', PresignedPost };
   }
 
   @Put('updateByServer/:id')
@@ -198,7 +198,7 @@ export class DesignController {
       },
     ),
   )
-  async updateDesign(
+  async updateByServer(
     @Param('id') id: string,
     @Body() DesignBody: DesignBody,
     @UploadedFiles()

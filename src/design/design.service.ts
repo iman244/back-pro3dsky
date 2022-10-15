@@ -249,7 +249,7 @@ export class DesignService {
 
       const UploadpreSignedParams = {
         Bucket: process.env.BUCKETS3_NAME,
-        Key: `${name}_0.rar`,
+        Key: `${name}.rar`,
         Conditions: [{ acl: 'private' }, { bucket: process.env.BUCKETS3_NAME }],
         Fields: {
           acl: 'private',
@@ -307,10 +307,7 @@ export class DesignService {
         resultList.push(result);
       }
 
-      let deleteRARFile = await this.deleteObjectInS3(
-        bucketS3,
-        `${name}_0.rar`,
-      );
+      let deleteRARFile = await this.deleteObjectInS3(bucketS3, `${name}.rar`);
 
       await this.DesignModel.findByIdAndRemove(id);
 
