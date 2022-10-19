@@ -27,8 +27,6 @@ export class UserController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    console.log('keyword', keyword);
-    console.log('page', page);
     if (keyword === '') {
       return this.UserService.AllUsersInformation(page, limit);
     } else {

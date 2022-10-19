@@ -12,6 +12,7 @@ export class AuthService {
   async login(body: credentials) {
     const { username, password } = body;
     const user = await this.UserModel.findOne({ username });
+    const expireHour = 4;
     if (user) {
       let userPassword = CryptoJS.AES.decrypt(
         user.password,
@@ -24,9 +25,9 @@ export class AuthService {
             isAdmin: user.isAdmin,
           },
           process.env.PASS_JWT,
-          { expiresIn: 60 * 60 },
+          { expiresIn: 60 * 60 * expireHour },
         );
-        return { user: user._doc, token };
+        return { user: user._doc, token, expireHour };
       } else {
         throw new HttpException('wrong credentials', HttpStatus.FORBIDDEN);
       }

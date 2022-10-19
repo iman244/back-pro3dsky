@@ -104,7 +104,6 @@ export class UserService {
       })
         .limit(limit)
         .skip((page - 1) * limit);
-      console.log('users\n', users);
       const decryptedUsers = users.map((user) => {
         const { _id, username, password, isAdmin } = user;
         const decryptedPassword = CryptoJS.AES.decrypt(

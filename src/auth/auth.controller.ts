@@ -15,7 +15,7 @@ export class AuthController {
     const data = await this.AuthService.login(body);
 
     var expireDate = new Date();
-    expireDate.setHours(expireDate.getHours() + 8);
+    expireDate.setHours(expireDate.getHours() + data.expireHour);
     response.cookie('access_token', data.token, {
       expires: expireDate,
       httpOnly: false,
