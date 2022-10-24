@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppService } from 'src/app.service';
 import { DesignSchema } from 'src/design/design.model';
 import { verifyUserMiddleware } from 'src/middlewares/verifyUser.middleware';
 import { FileController } from './file.controller';

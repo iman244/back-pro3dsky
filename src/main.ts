@@ -9,15 +9,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
     methods: ['POST', 'GET', 'PUT', 'DELETE'],
-    origin: true,
-    // origin: [
-    //   'http://pro3dsky.com',
-    //   'http://adminpanel.pro3dsky.com',
-    //   'http://www.pro3dsky.com',
-    //   'https://pro3dsky.com',
-    //   'https://adminpanel.pro3dsky.com',
-    //   'https://www.pro3dsky.com',
-    // ],
+    // origin: true,
+    origin: [
+      'http://pro3dsky.com',
+      'http://adminpanel.pro3dsky.com',
+      'http://www.pro3dsky.com',
+      'https://pro3dsky.com',
+      'https://adminpanel.pro3dsky.com',
+      'https://www.pro3dsky.com',
+    ],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
