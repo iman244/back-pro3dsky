@@ -44,20 +44,8 @@ export class DesignService {
         name: { $regex: name, $options: 'i' },
         isPremium: isPremium ? isPremium : { $in: [true, false] },
         category: category
-          ? { $regex: category, $options: 'i' }
-          : {
-              $in: [
-                'architecture',
-                'furniture',
-                'decoration',
-                'material',
-                'lighting',
-                'kitchen',
-                'bathroom',
-                'plants',
-                'other',
-              ],
-            },
+          ? { $regex: `^${category}`, $options: 'i' }
+          : { $regex: `[/s/S]*` },
       })
         .limit(limit)
         .skip((page - 1) * limit);
@@ -66,20 +54,8 @@ export class DesignService {
         name: { $regex: name, $options: 'i' },
         isPremium: isPremium ? isPremium : { $in: [true, false] },
         category: category
-          ? { $regex: category, $options: 'i' }
-          : {
-              $in: [
-                'architecture',
-                'furniture',
-                'decoration',
-                'material',
-                'lighting',
-                'kitchen',
-                'bathroom',
-                'plants',
-                'other',
-              ],
-            },
+          ? { $regex: `^${category}`, $options: 'i' }
+          : { $regex: `[/s/S]*` },
       });
 
       return { designs, totalDesigns };
