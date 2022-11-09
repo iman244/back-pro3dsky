@@ -21,8 +21,8 @@ export class AuthController {
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
-      domain: '127.0.0.1',
-      // domain: 'pro3dsky.com',
+      // domain: '127.0.0.1',
+      domain: 'pro3dsky.com',
     });
     return data.user;
   }
@@ -35,8 +35,8 @@ export class AuthController {
       httpOnly: false,
       sameSite: 'strict',
       secure: false,
-      domain: '127.0.0.1',
-      // domain: 'pro3dsky.com',
+      // domain: '127.0.0.1',
+      domain: 'pro3dsky.com',
     });
 
     return { message: 'logoutSuccessfully' };
