@@ -15,3 +15,4 @@ export class UserModule implements NestModule {
     consumer.apply(verifyAdminMiddleware).forRoutes('users');
   }
 }
+// export class UserModule {}

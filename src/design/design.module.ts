@@ -18,21 +18,21 @@ import { DesignService } from './design.service';
   controllers: [DesignController],
   providers: [DesignService],
 })
-// export class DesignModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer
-//       .apply(verifyUserMiddleware)
-//       .forRoutes(
-//         { path: 'designs', method: RequestMethod.GET },
-//         { path: 'designs/:id', method: RequestMethod.GET },
-//       );
-//     consumer
-//       .apply(verifyAdminMiddleware)
-//       .exclude(
-//         { path: 'designs', method: RequestMethod.GET },
-//         { path: 'designs/:id', method: RequestMethod.GET },
-//       )
-//       .forRoutes('designs');
-//   }
-// }
-export class DesignModule {}
+export class DesignModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(verifyUserMiddleware)
+      .forRoutes(
+        { path: 'designs', method: RequestMethod.GET },
+        { path: 'designs/:id', method: RequestMethod.GET },
+      );
+    consumer
+      .apply(verifyAdminMiddleware)
+      .exclude(
+        { path: 'designs', method: RequestMethod.GET },
+        { path: 'designs/:id', method: RequestMethod.GET },
+      )
+      .forRoutes('designs');
+  }
+}
+// export class DesignModule {}

@@ -10,9 +10,9 @@ export const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
+    role: {
+      type: Number,
+      default: 100,
     },
   },
   { timestamps: true },

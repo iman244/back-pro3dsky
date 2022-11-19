@@ -6,16 +6,22 @@ export interface hasToken extends Object {
   token: string;
 }
 
+export enum Role {
+  FREE = 100,
+  PRO = 200,
+  ADMIN = 300,
+}
+
 export interface credentials {
   username: string;
   password: string;
-  isAdmin: boolean;
+  role: Role;
 }
 
 export interface User extends DocumentResult<Object> {
   _id: string;
   username: string;
   password: string;
-  isAdmin: boolean;
+  role: Role;
   token: string;
 }

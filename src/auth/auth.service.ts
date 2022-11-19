@@ -22,7 +22,7 @@ export class AuthService {
         const token = jwt.sign(
           {
             id: user._id,
-            isAdmin: user.isAdmin,
+            role: user.role,
           },
           process.env.PASS_JWT,
           { expiresIn: 60 * 60 * expireHour },

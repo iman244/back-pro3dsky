@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request, Response } from 'express';
 import { Model } from 'mongoose';
-import { User } from './user/users.type';
+import { credentials, Role, User } from './user/users.type';
 const jwt = require('jsonwebtoken');
 
 @Injectable()
@@ -17,14 +17,14 @@ export class AppService {
     let isAdmin = jwt.verify(
       access_token,
       process.env.PASS_JWT,
-      (error, tokenData) => {
+      (error, tokenData: credentials) => {
         if (error) {
           throw new HttpException(
             'you are not authorized',
             HttpStatus.FORBIDDEN,
           );
         } else {
-          return tokenData.isAdmin;
+          return tokenData.role === Role.ADMIN;
         }
       },
     );

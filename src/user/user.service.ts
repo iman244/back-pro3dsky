@@ -15,7 +15,7 @@ export class UserService {
         .limit(limit)
         .skip((page - 1) * limit);
       const decryptedUsers = users.map((user) => {
-        const { _id, username, password, isAdmin } = user;
+        const { _id, username, password, role } = user;
         const decryptedPassword = CryptoJS.AES.decrypt(
           password,
           process.env.PASS_SEC,
@@ -25,7 +25,7 @@ export class UserService {
           _id,
           username,
           password: decryptedPassword,
-          isAdmin,
+          role,
         };
       });
       const totalUsers = await this.UserModel.countDocuments();
@@ -56,7 +56,7 @@ export class UserService {
 
   async updateUser(id: string, data: credentials) {
     try {
-      const { username, password, isAdmin } = data;
+      const { username, password, role } = data;
 
       const user = await this.UserModel.findByIdAndUpdate(
         id,
@@ -66,7 +66,7 @@ export class UserService {
             password,
             process.env.PASS_SEC,
           ).toString(),
-          isAdmin,
+          role,
         },
         { new: true },
       );
@@ -105,7 +105,7 @@ export class UserService {
         .limit(limit)
         .skip((page - 1) * limit);
       const decryptedUsers = users.map((user) => {
-        const { _id, username, password, isAdmin } = user;
+        const { _id, username, password, role } = user;
         const decryptedPassword = CryptoJS.AES.decrypt(
           password,
           process.env.PASS_SEC,
@@ -115,7 +115,7 @@ export class UserService {
           _id,
           username,
           password: decryptedPassword,
-          isAdmin,
+          role,
         };
       });
       const totalUsers = await this.UserModel.countDocuments({
